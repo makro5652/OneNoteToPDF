@@ -88,8 +88,13 @@ final class Exporter: ObservableObject {
 
         task = Task.detached { [weak self] in
             func ui(_ f: @escaping @MainActor (Exporter) -> Void) { Task { @MainActor in if let s = self { f(s) } } }
+            // Bildschirm und System während des Exports wach halten (sonst liefert macOS keine Fenster mehr).
+            let awake = ProcessInfo.processInfo.beginActivity(
+                options: [.idleDisplaySleepDisabled, .idleSystemSleepDisabled, .userInitiated],
+                reason: "OneNote-Export läuft")
             // Alle Zwischendateien am Ende immer entfernen (Erfolg, Fehler, Abbruch).
             defer {
+                ProcessInfo.processInfo.endActivity(awake)
                 try? FileManager.default.removeItem(at: tmp)
                 d.cleanupStaging()
             }

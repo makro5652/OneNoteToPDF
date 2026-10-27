@@ -53,7 +53,7 @@ Dauer: je nach Seite wenige Sekunden. Ein Notizbuch mit mehreren hundert Seiten 
 - **Getestet nur mit deutscher OneNote-Oberfläche.** Die App sucht Menüpunkte und Listen anhand ihrer Namen („Datei“, „Als PDF speichern“, „Liste der Abschnitte“, „Liste der Seiten“, Dialog „Sichern“/„Ort:“). Englische Menünamen sind teilweise berücksichtigt, die Listennamen aber nicht.
 - Die App hängt an der inneren Struktur von OneNote für Mac. Ein OneNote-Update kann sie brechen.
 - Während des Exports wird OneNote bedient; Hintergrundbetrieb ohne Störung ist nicht garantiert.
-- Gesperrter Bildschirm oder Ruhezustand unterbricht den Export.
+- Die App hält Bildschirm und Mac während des Exports wach. Manuelles Sperren, Zuklappen des Laptops oder Abmelden unterbricht den Export trotzdem.
 - Inoffizielles Projekt, nicht mit Microsoft verbunden. OneNote ist eine Marke der Microsoft Corporation.
 
 ## Fehlersuche
