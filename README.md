@@ -79,7 +79,8 @@ OneNoteToPDF.app/Contents/MacOS/OneNoteToPDF --probe
 
 ## Lizenz
 
-[Creative Commons Namensnennung 4.0 International (CC BY 4.0)](https://creativecommons.org/licenses/by/4.0/deed.de) – siehe [LICENSE](LICENSE).
+Apache License 2.0 – siehe [LICENSE](LICENSE) und [NOTICE](NOTICE).
 
-Du darfst das Projekt teilen und verändern, auch kommerziell, solange du angemessene Urheber-Angabe machst:
-**„OneNote → PDF“ von Marvin Kronsbein, https://github.com/makro5652/OneNoteToPDF, CC BY 4.0**
+Du darfst das Projekt frei nutzen, verändern und weitergeben, auch kommerziell. Bei Weitergabe müssen der Lizenztext und der Hinweis aus der `NOTICE`-Datei erhalten bleiben, und Änderungen sind kenntlich zu machen.
+
+Copyright 2026 Marvin Kronsbein
