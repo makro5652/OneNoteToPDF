@@ -18,6 +18,13 @@ struct OneNoteToPDFApp: App {
 
 final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
+        // Test des Claude-Pakets ohne OneNote: OneNoteToPDF --selftest-package /Ausgabeordner
+        let args = CommandLine.arguments
+        if let i = args.firstIndex(of: "--selftest-package"), i + 1 < args.count {
+            let out = URL(fileURLWithPath: args[i + 1])
+            Task.detached { exit(PackageSelfTest.run(out: out)) }
+            return
+        }
         // Nur-Lese-Diagnose ohne Oberfläche: OneNoteToPDF --probe
         if CommandLine.arguments.contains("--probe") {
             let d = OneNoteDriver()

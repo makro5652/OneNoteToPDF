@@ -74,6 +74,20 @@ struct ContentView: View {
     private var exportBox: some View {
         GroupBox("3 · Export") {
             VStack(alignment: .leading, spacing: 8) {
+                Picker("Ergebnis", selection: Binding(get: { ex.mode }, set: { ex.mode = $0 })) {
+                    ForEach(ExportMode.allCases) { Text($0.title).tag($0) }
+                }
+                .pickerStyle(.segmented)
+                .disabled(ex.busy)
+                if ex.mode == .claude {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Erzeugt einen Ordner mit je einer PDF (Handschrift bleibt erhalten) und einer Textdatei pro Abschnitt, dazu ein Inhaltsverzeichnis. Große Abschnitte werden in Teile aufgeteilt. Den Ordner ziehst du anschließend in das Projektwissen auf claude.ai.")
+                            .font(.caption).foregroundStyle(.secondary)
+                        Toggle("Texterkennung (OCR) für Seiten ohne Text – langsamer, Handschrift kann Fehler enthalten", isOn: $ex.useOCR)
+                            .font(.caption)
+                            .disabled(ex.busy)
+                    }
+                }
                 HStack {
                     Button("Probelauf (3 Seiten)") { ex.export(limit: 3) }
                         .disabled(ex.busy || ex.selectedLeafCount == 0)
@@ -83,7 +97,11 @@ struct ContentView: View {
                     if ex.busy { Button("Abbrechen") { ex.cancel() } }
                     if let url = ex.resultURL, !ex.busy {
                         Button("Im Finder zeigen") { NSWorkspace.shared.activateFileViewerSelecting([url]) }
-                        Button("Öffnen") { NSWorkspace.shared.open(url) }
+                        if ex.resultIsPackage {
+                            Button("claude.ai/projects öffnen") { ex.openClaudeProjects() }
+                        } else {
+                            Button("Öffnen") { NSWorkspace.shared.open(url) }
+                        }
                     }
                 }
                 Text("Während des Exports bitte Maus und Tastatur nicht benutzen – OneNote bleibt im Vordergrund.")

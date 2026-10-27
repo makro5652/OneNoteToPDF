@@ -12,7 +12,8 @@ OneNote für Mac bietet nur „Datei → Als PDF speichern“ für eine einzelne
 - Abschnitte und Gruppen einzeln an- und abwählbar
 - Exportiert jede Seite über OneNotes eigene PDF-Funktion – Handschrift, Bilder und Formatierung bleiben erhalten
 - Eine gemeinsame PDF mit Lesezeichen: Abschnittsgruppe → Abschnitt → Seite → Unterseite
-- Probelauf mit 3 Seiten, Fortschrittsanzeige, Abbrechen jederzeit
+- **Paket für Claude-Projekte** (siehe unten): pro Abschnitt eine PDF und eine Textdatei, dazu ein Inhaltsverzeichnis
+- Probelauf mit 3 Seiten, Fortschrittsanzeige, Abbrechen jederzeit; bei Abbruch oder Fehler bleibt das bisher Fertige als „… (unvollständig)“ erhalten
 - Zwischendateien werden nach dem Export (auch nach Fehler oder Abbruch) automatisch gelöscht
 - Keine Anmeldung, kein Cloud-Zugriff, keine Azure-Registrierung – alles läuft lokal
 
@@ -47,6 +48,21 @@ Die App wird ad-hoc signiert. Beim ersten Start ggf. Rechtsklick → „Öffnen�
 4. Speicherort der PDF wählen. Während des Exports Maus und Tastatur nicht benutzen und OneNote nicht bedienen.
 
 Dauer: je nach Seite wenige Sekunden. Ein Notizbuch mit mehreren hundert Seiten dauert entsprechend lange; die Wartezeit nach dem Seitenwechsel lässt sich im Fenster anpassen (bei viel Tinte nicht zu kurz wählen).
+
+## Export für Claude-Projekte
+
+Unter „3 · Export“ lässt sich statt „Eine gemeinsame PDF“ das **Paket für Claude-Projekt** wählen. Die App legt einen Ordner an:
+
+| Datei | Inhalt |
+|---|---|
+| `00 INDEX.md` | Anleitung, Vorschlag für die Projektanweisung, Inhaltsverzeichnis (Seitentitel → PDF-Datei und Seite) |
+| `01 <Abschnitt>.pdf` | Alle Seiten des Abschnitts mit Handschrift/Bildern (höchstens 80 Seiten und ca. 20 MB; größere Abschnitte werden zu `… (Teil 1).pdf`, `… (Teil 2).pdf`) |
+| `01 <Abschnitt>.md` | Text der Seiten (aus der PDF-Textebene), je Seite mit Verweis auf PDF und Seitenzahl |
+
+- **Texterkennung (OCR, optional):** Seiten ohne Textebene (z. B. nur Handschrift oder Bilder) werden mit Apple Vision lokal erkannt und in der `.md` als „per Texterkennung“ gekennzeichnet. Bei Handschrift ist die Erkennung unzuverlässig; maßgeblich ist immer die PDF. Seiten mit Text *und* Handschrift werden nicht per OCR gelesen, die Handschrift steht dann nur in der PDF.
+- **Hochladen:** Es gibt keine öffentliche Schnittstelle, um Projektwissen automatisch zu befüllen. Den Ordner auf claude.ai unter *Projekte → Projektwissen* hineinziehen (die App öffnet auf Wunsch die Projekte-Seite).
+- Das Projektwissen ist größenbegrenzt; bei großen Notizbüchern nur die benötigten Abschnitte exportieren.
+- Test ohne OneNote: `OneNoteToPDF.app/Contents/MacOS/OneNoteToPDF --selftest-package /Ausgabeordner`
 
 ## Grenzen und Hinweise
 
