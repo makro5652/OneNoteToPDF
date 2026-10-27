@@ -55,13 +55,21 @@ final class OneNoteDriver: @unchecked Sendable {
         return AXUIElementCreateApplication(a.processIdentifier)
     }
     private func windows() throws -> [AXUIElement] { try axApp().attr("AXWindows") as? [AXUIElement] ?? [] }
+    /// Wartet bis zu 2 Minuten auf das Hauptfenster (z. B. nach Space-Wechsel, Bildschirmsperre oder Minimieren).
     private func mainWindow() throws -> AXUIElement {
-        for attempt in 0..<20 {
-            if let w = try windows().first(where: { $0.ident != "save-panel" && $0.role == "AXWindow" }) { return w }
-            if attempt == 2 { app?.unhide(); app?.activate(options: [.activateAllWindows]) }
-            Thread.sleep(forTimeInterval: 0.25)
+        let deadline = Date().addingTimeInterval(120)
+        var attempt = 0
+        while Date() < deadline {
+            if let w = try windows().first(where: { $0.ident != "save-panel" && $0.role == "AXWindow" }) {
+                if attempt > 0 { Log.write("Hauptfenster wieder da nach \(attempt) Versuchen") }
+                return w
+            }
+            if attempt == 0 { Log.write("Kein Hauptfenster; Fenster: \(((try? windows()) ?? []).map { "\($0.role)/\($0.ident)/\($0.label)" }) – warte …") }
+            if attempt % 8 == 2 { app?.unhide(); app?.activate(options: [.activateAllWindows]) }
+            attempt += 1
+            if Task.isCancelled { break }
+            Thread.sleep(forTimeInterval: 0.5)
         }
-        Log.write("Kein Hauptfenster; Fenster: \(((try? windows()) ?? []).map { "\($0.role)/\($0.ident)/\($0.label)" })")
         throw DriverError.noWindow
     }
     private func savePanel() -> AXUIElement? { try? windows().first { $0.ident == "save-panel" } }

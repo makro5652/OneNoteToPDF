@@ -93,6 +93,14 @@ final class Exporter: ObservableObject {
                 try? FileManager.default.removeItem(at: tmp)
                 d.cleanupStaging()
             }
+            let assembler = PDFAssembler()
+            /// Bei Abbruch/Fehler: bisher fertige Seiten nicht verwerfen, sondern als „… (unvollständig).pdf“ sichern.
+            func savePartial() -> URL? {
+                guard assembler.doc.pageCount > 0 else { return nil }
+                let name = target.deletingPathExtension().lastPathComponent + " (unvollständig).pdf"
+                let url = target.deletingLastPathComponent().appendingPathComponent(name)
+                return assembler.write(to: url) ? url : nil
+            }
             do {
                 // Reste früherer Läufe entfernen
                 let cacheRoot = tmp.deletingLastPathComponent()
@@ -100,7 +108,6 @@ final class Exporter: ObservableObject {
                     try? FileManager.default.removeItem(at: old)
                 }
                 try FileManager.default.createDirectory(at: tmp, withIntermediateDirectories: true)
-                let assembler = PDFAssembler()
                 var counter = 0
                 var failed = 0
                 var streak = 0
@@ -170,10 +177,16 @@ final class Exporter: ObservableObject {
                     $0.busy = false
                 }
             } catch is CancellationError {
-                ui { $0.note("Abgebrochen. Zwischendateien wurden gelöscht."); $0.busy = false }
+                let part = savePartial()
+                ui {
+                    $0.resultURL = part
+                    $0.note(part == nil ? "Abgebrochen." : "Abgebrochen. Bisher fertige Seiten gesichert: \(part!.lastPathComponent)")
+                    $0.busy = false
+                }
             } catch {
-                let m = error.localizedDescription
-                ui { $0.errorText = m; $0.busy = false }
+                let part = savePartial()
+                let m = error.localizedDescription + (part == nil ? "" : "\nBisher fertige Seiten wurden gesichert: \(part!.path)")
+                ui { $0.resultURL = part; $0.errorText = m; $0.busy = false }
             }
         }
     }
